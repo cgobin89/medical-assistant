@@ -289,9 +289,7 @@ This is important because we do not want to upload .venv or other local/generate
 In VS Code:
 
     Right-click the medical-assistant folder.
-
     Select New File.
-
     Name it exactly: .gitignore
 
 Add to file:
@@ -317,26 +315,24 @@ What this does:
 Your .venv contains your local Python installation and packages. We don't want to put all of that on GitHub.
 
 The others prepare us for later:
-
     __pycache__/ → temporary Python files
-
     .env → potentially sensitive configuration/secrets
-
     .vscode/ → your personal VS Code settings
-
     models/ → potentially large model files
-
     data/ → datasets/documents that we may not want in the repository
 
 ## 15. Initialize Git
+
+```powershell
 git --version
 git init
 git status
+```
 
 Expected outcome: Git should show the files but not show .venv/
 This verifies that gitignore is correctly working
 
-Make your first commit (saved checkpoint for the project).
+## 16. Make your first commit (saved checkpoint for the project).
 Currently, we have the following working:
 Python 3.11.9 ✓
 Virtual environment ✓
@@ -349,27 +345,24 @@ Experiment documentation ✓
 Git repository ✓
 
 1. Tell Git to track the project files
-
-Run:
-
+```powershell
 git add .
+```
 
 There may be no output. That's normal.
 2. Check what will be committed
 
-Run:
-
+```powershell
 git status
+```
 
 You should now see your files under something like:
-
 Changes to be committed:
-
 You should not see .venv.
+
 3. Create the checkpoint
 
-Run:
-
+```powershell
 git commit -m "Set up local Phi-3 development environment"
-
+```
 You should get a message indicating that files were committed.
