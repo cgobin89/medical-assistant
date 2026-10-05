@@ -114,24 +114,20 @@ This ensures VS Code uses the project virtual environment instead of the system 
 
 ## 9. Test Python
 In the VS Code Explorer:
+- In medical-assistant folder:
+    - Select New File.
+    - Name it: test_python.py
 
-    In medical-assistant folder.
-    Select New File.
-    Name it: test_python.py
+Within the file, input the following and save: 
+```
+print("Python is working!")
+```
+Click 'run' in the top right.
 
-Type within file: print("Python is working!")
-Save and run it: Should output the same text
+Expected output: Python is working!
 
-This establishes the first known good component
-VS Code
-   ↓
-.venv
-   ↓
-Python 3.11.9
-   ↓
-your Python program
-  ↓
-"Python is working!"
+This establishes the first known good component.
+VS Code --> .venv --> Python 3.11.9 --> your Python program --> "Python is working!"
 
 ## 10. Install Ollama Python package
 Make sure your terminal still starts with: (.venv)
@@ -142,10 +138,9 @@ pip install ollama
 
 This installs the Python library that lets a Python program communicate with your locally running Ollama server to control it.
 Think of Ollama as a car:
-
-    Ollama application = the car
-    Phi-3 = the engine
-    Python ollama package = the steering wheel/control interface your Python program uses
+- Ollama application = the car
+- Phi-3 = the engine
+- Python ollama package = the steering wheel/control interface your Python program uses
 
 Verify the installation and make sure the location includes .venv
 
@@ -155,8 +150,9 @@ pip show ollama
 
 ## 11. Get Python to talk to Phi-3
 Create new file: ask_phi3.py
-Input the following and save:
 
+In the file, input the following and save:
+```
 from ollama import chat
 
 response = chat(
@@ -170,7 +166,7 @@ response = chat(
 )
 
 print(response["message"]["content"])
-
+```
 From your (.venv) terminal, run:
 
 ```powershell
@@ -178,11 +174,12 @@ python ask_phi3.py
 ```
 
 Expected result: Phi-3 returns an answer.
+
 The generated response signifies important milestone: you are no longer just chatting with Phi-3 through Ollama—this confirms that Python can communicate with the locally running Phi-3 model through Ollama and Python is controlling the model.
 
 ## 12. Adjust the script to enable user to type questions
 Open ask_phi3.py and replace its contents with the following and save:
-
+```
 from ollama import chat
 
 print("Medical Assistant - Phi-3")
@@ -205,14 +202,17 @@ while True:
     )
 
     print(f"Phi-3: {response['message']['content']}\n")
-
+```
 In your (.venv) terminal:
 
 ```powershell
 python ask_phi3.py
 ```
 
+Within the terminal, you can now type a question
+
 Type: What is the purpose of RAG?
+
 Expected Result: Let's you type a question and generates a response
 
 Milestone:
@@ -229,32 +229,32 @@ Milestone:
                       ▼
                     Answer
 
-What happened: Demonstrated that Python app successfully sends the question to Phi-3 and gets a generated response back.
-Challenge: Phi-3 has now given us a very confident hallucination:
+- What happened: Demonstrated that Python app successfully sends the question to Phi-3 and gets a generated response back.
 
-Question
-   ↓
-Phi-3 Mini
-   ↓
-Answer based on its learned parameters
-   ↓
+- Challenge: Phi-3 has now given us a very confident hallucination:
+
+▼ Question
+ 
+▼ Phi-3 Mini
+      
+▼ Answer based on its learned parameters
+      
 ❌ Incorrect definition of RAG
-We haven't given Phi-3 any external information.
 
-That's going to change as we build the project.
+- Explanation: We haven't given Phi-3 any external information. That's going to change as we build the project according to the following.
 
-Question
-   ↓
-Retriever
-   ↓
-Relevant information
-   ↓
-Phi-3 Mini
-   ↓
-Grounded answer
+▼ Question
+   
+▼ Retriever
+   
+▼ Relevant information
+   
+▼ Phi-3 Mini
+   
+▼ Grounded answer
 
 ## 13. Add Prompting
-Within ask_phi3.py, replace the previous section:
+Within the file: ask_phi3.py, replace the previous section:
 
 messages=[
     {
@@ -263,8 +263,8 @@ messages=[
     }
 ]
 
-with the following to add prompting and save
-
+with the following and save. This will allow you to add prompting.
+```
 messages=[
     {
         "role": "system",
@@ -280,20 +280,20 @@ messages=[
         "content": question,
     },
 ]
-
+```
 To exit the chat, type quit
 
 ## 14. Ensure project is safely tracked since planning to push to Github
 This is important because we do not want to upload .venv or other local/generated files to GitHub.
 
-In VS Code:
+- In VS Code:
 
-    Right-click the medical-assistant folder.
-    Select New File.
-    Name it exactly: .gitignore
+    - Right-click the medical-assistant folder.
+    - Select New File.
+    - Name it exactly: .gitignore
 
-Add to file:
-
+- Add to file:
+```
 # Python virtual environment
 .venv/
 
@@ -310,9 +310,8 @@ __pycache__/
 # Local model/data files
 models/
 data/
-
-What this does:
-Your .venv contains your local Python installation and packages. We don't want to put all of that on GitHub.
+```
+- What this does: Your .venv contains your local Python installation and packages. We don't want to put all of that on GitHub.
 
 The others prepare us for later:
     __pycache__/ → temporary Python files
@@ -330,19 +329,20 @@ git status
 ```
 
 Expected outcome: Git should show the files but not show .venv/
-This verifies that gitignore is correctly working
+
+This verifies that gitignore is correctly working.
 
 ## 16. Make your first commit (saved checkpoint for the project).
 Currently, we have the following working:
-Python 3.11.9 ✓
-Virtual environment ✓
-Ollama ✓
-Phi-3 ✓
-Python → Ollama connection ✓
-Interactive chatbot ✓
-Experiment documentation ✓
-.gitignore ✓
-Git repository ✓
+✓ Python 3.11.9 
+✓ Virtual environment
+✓ Ollama 
+✓ Phi-3
+✓ Python → Ollama connection
+✓ Interactive chatbot
+✓ Experiment documentation
+✓ .gitignore
+✓ Git repository
 
 1. Tell Git to track the project files
 ```powershell
@@ -350,6 +350,7 @@ git add .
 ```
 
 There may be no output. That's normal.
+
 2. Check what will be committed
 
 ```powershell
