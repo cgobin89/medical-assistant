@@ -39,6 +39,13 @@ Download and install Ollama for Windows:
 
 https://ollama.com/download/windows
 
+### IMPORTANT: Windows vs Mac terminal use
+Windows: Use the VS Code PowerShell terminal. 
+
+macOS: Use the VS Code integrated terminal (typically zsh). 
+
+The commands in this guide may differ slightly between Windows PowerShell and macOS/Linux. Follow the operating-system-specific commands where provided.
+
 ## 4. Open VS Code and verify Python and Ollama Versions
 
 Open a new VS Code terminal and verify Python:
@@ -367,3 +374,525 @@ You should not see .venv.
 git commit -m "Set up local Phi-3 development environment"
 ```
 You should get a message indicating that files were committed.
+
+## 17. Install NVM for Windows or MAC Users
+NVM (Node Version Manager) allows you to install and manage different versions of Node.js on your computer.
+
+Our project uses Node.js 22 for the React frontend.
+
+WINDOWS USERS: install NVM for Windows.
+
+Use the link below, scroll down to Assets, download the Windows installer (amd64-setup.exe) for a standard 64-bit Intel or AMD computer.
+
+https://github.com/nvm-windows/nvm/releases/tag/v2.0.1-hotfix.2
+
+During installation:
+
+    Accept the license agreement.
+    Use the default installation locations.
+    When asked about the Node.js symlink, use the default option.
+    Leave the default security/TLS options enabled.
+    Author software notifications are optional.
+
+After installation, close and reopen VS Code.
+
+MAC USERS: Install NVM
+
+https://github.com/nvm-sh/nvm
+
+Follow the installation instructions provided by the project.
+
+After installation, restart your terminal.
+
+## 18. Install Node.js 22
+
+Open a new VS Code terminal and verify NVM:
+
+```
+nvm version
+```
+
+Expected Output: NVM version number.
+
+Install Node.js 22:
+
+```
+nvm install 22
+```
+
+Activate Node.js 22:
+
+```
+nvm use 22
+```
+
+Verify Node.js and npm:
+
+```
+node --version
+npm --version
+```
+
+You should see Node.js version 22.x.x and an npm version.
+
+## 19. Create React Frontend
+
+The project uses React for the website interface. Vite is used to create and run the React development environment.
+
+From the `medical-assistant` project folder, run:
+
+```
+npm create vite@latest frontend
+```
+
+npm may display:
+
+Need to install the following packages: create-vite@... Ok to proceed? (y)
+
+
+Type `y` and press Enter. This is expected. npm is temporarily downloading the Vite project creation tool needed to create the React application.
+
+Vite will then ask you to choose the framework and variant.
+
+When you get to those questions, choose:
+
+    Framework: React
+    Variant: JavaScript
+    Linter: ESLint
+    Install with npm and start now
+    
+Vite will install the React dependencies and then start the development server.
+
+The development server will provide a local address, typically:
+
+http://localhost:5173/
+
+Open that address in your browser to view the React application.
+
+### Milestone
+
+The default Vite/React "Get Started" page should appear in the browser.
+
+This confirms:
+
+**Computer → Node.js → Vite → React → Browser**
+
+### 20. Turn the Generic Vite page into the Medical Assistant page
+
+To bring the terminal prompt back, stop the Vite server
+
+In the terminal that's running Vite, press:
+
+```
+Ctrl+C
+```
+
+Within your medical assistant folder, open:
+
+frontend/src/App.jsx
+
+Delete the existing contents of App.jsx and replace them with rthe following and save:
+
+```
+import { useState } from "react"
+
+function App() {
+  const [question, setQuestion] = useState("")
+
+  return (
+    <div>
+      <h1>Local Medical Assistant</h1>
+      <p>Ask a question below.</p>
+
+      <input
+        type="text"
+        placeholder="Type your question..."
+        value={question}
+        onChange={(event) => setQuestion(event.target.value)}
+      />
+
+      <button onClick={() => alert(question)}>
+        Ask
+      </button>
+    </div>
+  )
+}
+
+export default App
+```
+
+Save the file.
+
+Restart the React development server:
+
+```
+cd frontend
+npm run dev
+```
+
+Open the local address provided by Vite.
+
+The browser should now display:
+
+Local Medical Assistant with a question input and an Ask button.
+
+Type a question into the input box, such as:
+
+What is RAG?
+
+Click Ask.
+
+A browser alert should display the question you entered.
+
+## Milestone
+
+This confirms that React can capture and use information entered by the user.
+
+The current flow is:
+
+Browser → React → User question
+
+The alert() is only a temporary test. It will eventually be replaced with a request to the Python backend.
+
+## 21. Create the Python backend
+
+Stop the React development server:
+
+```
+Ctrl+C
+```
+
+From the medical-assistant project folder, create the backend directory:
+
+MAKE SURE YOU ARE NOT IN THE FRONTEND FOLDER.
+
+```
+pwd
+```
+
+If it shows you are in frontend, go back one level to be in the medical assistant folder by running:
+
+```
+cd ..
+```
+
+Now you should be in:
+
+...\medical-assistant
+
+Create the backend directory:
+
+```
+mkdir backend
+```
+
+Make sure you're in the Python virtual environment- noted by the (.venv) in your terminal. If you do not see it, Activate the Python virtual environment:
+
+```
+.\.venv\Scripts\Activate.ps1
+```
+
+Install FastAPI and Uvicorn:
+
+```
+pip install fastapi uvicorn
+```
+Wait for it to finish.
+
+Verify FastAPI:
+
+```
+pip show fastapi
+```
+
+You should see information such as its name, version, and location.
+
+Save the Python dependencies:
+
+pip freeze > requirements.txt
+
+Step 1 — Create main.py
+
+In VS Code's Explorer, find:
+
+medical-assistant/
+└── backend/
+
+Right-click backend → New File.
+
+Name it: main.py
+
+Put the following in main.py and save it:
+
+```
+from fastapi import FastAPI
+from ollama import chat
+
+app = FastAPI()
+
+
+@app.get("/")
+def home():
+    return {"message": "Medical Assistant backend is running"}
+
+
+@app.get("/ask")
+def ask(question: str):
+    response = chat(
+        model="phi3",
+        messages=[
+            {
+                "role": "user",
+                "content": question,
+            }
+        ],
+    )
+
+    return {
+        "question": question,
+        "answer": response["message"]["content"],
+    }
+```
+
+What this does: This creates your first Python web server.
+
+Step 3 — Start the backend
+
+Make sure your terminal is in the medical-assistant folder and (.venv) is active.
+
+Run:
+
+```
+uvicorn backend.main:app --reload
+```
+
+You should see something similar to:
+
+Uvicorn running on http://127.0.0.1:8000
+
+Keep this terminal running while using the backend.
+
+Test the FastAPI server
+
+Open the following address in a web browser:
+
+http://127.0.0.1:8000
+
+The browser should display:
+
+{"message":"Medical Assistant backend is running"}
+
+This confirms that the Python FastAPI backend is running.
+Test the FastAPI → Ollama → Phi-3 connection
+
+With the FastAPI server still running, open:
+
+http://127.0.0.1:8000/ask?question=What%20is%20RAG%3F
+
+The browser should return a response similar to:
+
+{
+    "question": "What is RAG?",
+    "answer": "..."
+}
+
+The exact answer will vary because it is generated by the local Phi-3 model.
+
+## Milestone
+
+Your Python backend is running independently from your React frontend.
+
+The project now has the following working connection:
+
+Browser → FastAPI → Python → Ollama → Phi-3 → FastAPI → Browser
+
+## 22. Connect React website to the Python Backend
+
+Step 1 — Keep FastAPI running
+
+Make sure your backend terminal is running. If not,:
+
+```
+uvicorn backend.main:app --reload
+```
+
+Don't close this terminal.
+
+You'll want the FastAPI server running while we test the website.
+
+Step 2 — Open a second terminal
+
+In VS Code:
+
+Terminal → New Terminal
+
+You should now have a second terminal.
+
+The first one is running FastAPI.
+
+The second one is where we'll run React.
+
+In the second terminal, go to the frontend:
+
+```
+cd frontend
+```
+
+Then:
+
+```
+npm run dev
+```
+
+Open:
+
+http://localhost:5173/
+
+You should see your Local Medical Assistant page.
+
+Step 4 — Change App.jsx
+
+In the medical-assitant folder, open: frontend/src/App.jsx
+
+Replace the entire file with the following and save:
+
+```
+import { useState } from "react"
+
+function App() {
+  const [question, setQuestion] = useState("")
+  const [answer, setAnswer] = useState("")
+  const [loading, setLoading] = useState(false)
+
+  async function askQuestion() {
+    if (!question.trim()) {
+      return
+    }
+
+    setLoading(true)
+    setAnswer("")
+
+    try {
+      const response = await fetch(
+        `http://127.0.0.1:8000/ask?question=${encodeURIComponent(question)}`
+      )
+
+      const data = await response.json()
+
+      setAnswer(data.answer)
+    } catch (error) {
+      setAnswer("Unable to connect to the medical assistant.")
+    }
+
+    setLoading(false)
+  }
+
+  return (
+    <div>
+      <h1>Local Medical Assistant</h1>
+      <p>Ask a question below.</p>
+
+      <input
+        type="text"
+        placeholder="Type your question..."
+        value={question}
+        onChange={(event) => setQuestion(event.target.value)}
+      />
+
+      <button onClick={askQuestion}>
+        Ask
+      </button>
+
+      {loading && <p>Thinking...</p>}
+
+      {answer && (
+        <div>
+          <h2>Answer</h2>
+          <p>{answer}</p>
+        </div>
+      )}
+    </div>
+  )
+}
+
+export default App
+```
+
+Save it.
+
+Before testing it, you need to enable React Frontend to Communicate with FastAPI
+
+Because the React frontend and FastAPI backend run on different local ports, FastAPI needs to allow requests from the React development server.
+
+In medical assistant folder, open backend/main.py and replace with the following
+
+```
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+from ollama import chat
+
+app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "http://localhost:5173",
+        "http://127.0.0.1:5173",
+    ],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+@app.get("/")
+def home():
+    return {"message": "Medical Assistant backend is running"}
+
+
+@app.get("/ask")
+def ask(question: str):
+    response = chat(
+        model="phi3",
+        messages=[
+            {
+                "role": "user",
+                "content": question,
+            }
+        ],
+    )
+
+    return {
+        "question": question,
+        "answer": response["message"]["content"],
+    }
+```
+
+Step 5 — Test the website
+
+http://localhost:5173/
+
+Type: What is RAG? 
+
+Then click Ask.
+
+Expected Output: Phi-3's response
+
+## EXPLANATION:
+
+In `frontend/src/App.jsx`, the React application sends the user's question to the FastAPI backend using `fetch()`.
+
+The request is sent to:
+
+http://127.0.0.1:8000/ask
+
+The question is passed as a URL parameter.
+
+FastAPI sends the question to Ollama, which generates an answer using Phi-3. The answer is then returned to React and displayed on the webpage.
+
+### Milestone
+
+The complete local AI pipeline is now working:
+
+**React → FastAPI → Ollama → Phi-3 → FastAPI → React**
+
+A user can enter a question on the website and receive an answer generated by the locally running Phi-3 model.
