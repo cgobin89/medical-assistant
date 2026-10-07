@@ -375,34 +375,38 @@ git commit -m "Set up local Phi-3 development environment"
 ```
 You should get a message indicating that files were committed.
 
+**NOTE THIS ESTABLISHES AN INITIAL FOUNDATION FOR THE CHAT ASSISTANT**
+
+## NEXT PHASE: CONNECT THIS FOUNDATION TO A WEBSITE INTERFACE
+
+To accomplish this, we will set up the frontend with REACT to communicate with the Python backend.
+
 ## 17. Install NVM for Windows or MAC Users
 NVM (Node Version Manager) allows you to install and manage different versions of Node.js on your computer.
 
 Our project uses Node.js 22 for the React frontend.
 
-WINDOWS USERS: install NVM for Windows.
+**WINDOWS USERS**: Install NVM.
 
 Use the link below, scroll down to Assets, download the Windows installer (amd64-setup.exe) for a standard 64-bit Intel or AMD computer.
 
 https://github.com/nvm-windows/nvm/releases/tag/v2.0.1-hotfix.2
 
-During installation:
+- During installation:
 
-    Accept the license agreement.
-    Use the default installation locations.
-    When asked about the Node.js symlink, use the default option.
-    Leave the default security/TLS options enabled.
-    Author software notifications are optional.
+  - Accept the license agreement.
+  - Use the default installation locations.
+  - When asked about the Node.js symlink, use the default option.
+  - Leave the default security/TLS options enabled.
+  - Author software notifications are optional.
 
-After installation, close and reopen VS Code.
+- After installation, close and reopen VS Code.
 
-MAC USERS: Install NVM
+**MAC USERS**: Install NVM
 
 https://github.com/nvm-sh/nvm
 
-Follow the installation instructions provided by the project.
-
-After installation, restart your terminal.
+Follow the installation instructions provided by the project. After installation, restart your terminal.
 
 ## 18. Install Node.js 22
 
@@ -439,7 +443,7 @@ You should see Node.js version 22.x.x and an npm version.
 
 The project uses React for the website interface. Vite is used to create and run the React development environment.
 
-From the `medical-assistant` project folder, run:
+- From the `medical-assistant` project folder, run:
 
 ```
 npm create vite@latest frontend
@@ -450,24 +454,20 @@ npm may display:
 Need to install the following packages: create-vite@... Ok to proceed? (y)
 
 
-Type `y` and press Enter. This is expected. npm is temporarily downloading the Vite project creation tool needed to create the React application.
+Type `y` and press Enter.
 
-Vite will then ask you to choose the framework and variant.
+- Choose the following:
 
-When you get to those questions, choose:
-
-    Framework: React
-    Variant: JavaScript
-    Linter: ESLint
-    Install with npm and start now
+    - Framework: React
+    - Variant: JavaScript
+    - Linter: ESLint
+    - Install with npm and start now
     
-Vite will install the React dependencies and then start the development server.
-
-The development server will provide a local address, typically:
+Vite will install the React dependencies and then start the development server. The development server will provide a local address, typically:
 
 http://localhost:5173/
 
-Open that address in your browser to view the React application.
+- Open that address in your browser to view the React application.
 
 ### Milestone
 
@@ -477,21 +477,19 @@ This confirms:
 
 **Computer → Node.js → Vite → React → Browser**
 
-### 20. Turn the Generic Vite page into the Medical Assistant page
+## 20. Turn the Generic Vite page into the Medical Assistant page
 
-To bring the terminal prompt back, stop the Vite server
-
-In the terminal that's running Vite, press:
+To bring the terminal prompt back, stop the Vite server by typing:
 
 ```
 Ctrl+C
 ```
 
-Within your medical assistant folder, open:
+- Within your medical assistant folder, open:
 
 frontend/src/App.jsx
 
-Delete the existing contents of App.jsx and replace them with rthe following and save:
+- Delete the existing contents of App.jsx and replace them with the following:
 
 ```
 import { useState } from "react"
@@ -521,28 +519,18 @@ function App() {
 export default App
 ```
 
-Save the file.
-
-Restart the React development server:
+- Save the file.
+- Restart the React development server:
 
 ```
 cd frontend
 npm run dev
 ```
 
-Open the local address provided by Vite.
-
-The browser should now display:
-
-Local Medical Assistant with a question input and an Ask button.
-
-Type a question into the input box, such as:
-
-What is RAG?
-
-Click Ask.
-
-A browser alert should display the question you entered.
+- Open the local address provided by Vite.
+    - The browser should now display: Local Medical Assistant with a question input and an Ask button.
+- Type a question into the input box and click Ask
+    - A browser alert should display the question you entered.
 
 ## Milestone
 
@@ -556,15 +544,15 @@ The alert() is only a temporary test. It will eventually be replaced with a requ
 
 ## 21. Create the Python backend
 
-Stop the React development server:
+- Stop the React development server:
 
 ```
 Ctrl+C
 ```
 
-From the medical-assistant project folder, create the backend directory:
+- From the medical-assistant project folder, create the backend directory:
 
-MAKE SURE YOU ARE NOT IN THE FRONTEND FOLDER.
+**MAKE SURE YOU ARE NOT IN THE FRONTEND FOLDER.**
 
 ```
 pwd
@@ -580,49 +568,44 @@ Now you should be in:
 
 ...\medical-assistant
 
-Create the backend directory:
+- Create the backend directory:
 
 ```
 mkdir backend
 ```
 
-Make sure you're in the Python virtual environment- noted by the (.venv) in your terminal. If you do not see it, Activate the Python virtual environment:
+**Make sure you're in the Python virtual environment- noted by the (.venv) in your terminal.** 
+
+If you do not see it, Activate the Python virtual environment:
 
 ```
 .\.venv\Scripts\Activate.ps1
 ```
 
-Install FastAPI and Uvicorn:
+- Install FastAPI and Uvicorn:
 
 ```
 pip install fastapi uvicorn
 ```
-Wait for it to finish.
 
-Verify FastAPI:
+- Verify FastAPI:
 
 ```
 pip show fastapi
 ```
 
-You should see information such as its name, version, and location.
+Expected output: name, version, and location.
 
-Save the Python dependencies:
+### Create main.py
 
-pip freeze > requirements.txt
-
-Step 1 — Create main.py
-
-In VS Code's Explorer, find:
+- In VS Code's Explorer, find:
 
 medical-assistant/
 └── backend/
 
-Right-click backend → New File.
-
-Name it: main.py
-
-Put the following in main.py and save it:
+- Right-click backend → New File.
+- Name it: main.py
+- Put the following in main.py and save it:
 
 ```
 from fastapi import FastAPI
@@ -654,11 +637,11 @@ def ask(question: str):
     }
 ```
 
-What this does: This creates your first Python web server.
+**WHAT THIS DOES:** This creates your first Python web server.
 
-Step 3 — Start the backend
+### Start the backend
 
-Make sure your terminal is in the medical-assistant folder and (.venv) is active.
+**Make sure your terminal is in the medical-assistant folder and (.venv) is active.**
 
 Run:
 
@@ -666,26 +649,23 @@ Run:
 uvicorn backend.main:app --reload
 ```
 
-You should see something similar to:
+Expected output (similar to): Uvicorn running on http://127.0.0.1:8000
 
-Uvicorn running on http://127.0.0.1:8000
+**Keep this terminal running while using the backend.**
 
-Keep this terminal running while using the backend.
+### Test the FastAPI server
 
-Test the FastAPI server
-
-Open the following address in a web browser:
+- Open the following address in a web browser:
 
 http://127.0.0.1:8000
 
-The browser should display:
-
-{"message":"Medical Assistant backend is running"}
+The browser should display: {"message":"Medical Assistant backend is running"}
 
 This confirms that the Python FastAPI backend is running.
-Test the FastAPI → Ollama → Phi-3 connection
 
-With the FastAPI server still running, open:
+### Test the FastAPI → Ollama → Phi-3 connection
+
+- With the FastAPI server still running, open:
 
 http://127.0.0.1:8000/ask?question=What%20is%20RAG%3F
 
@@ -708,7 +688,7 @@ Browser → FastAPI → Python → Ollama → Phi-3 → FastAPI → Browser
 
 ## 22. Connect React website to the Python Backend
 
-Step 1 — Keep FastAPI running
+- Keep FastAPI running
 
 Make sure your backend terminal is running. If not,:
 
@@ -716,45 +696,36 @@ Make sure your backend terminal is running. If not,:
 uvicorn backend.main:app --reload
 ```
 
-Don't close this terminal.
+Don't close this terminal. You'll want the FastAPI server running while we test the website.
 
-You'll want the FastAPI server running while we test the website.
+- Open a second terminal
 
-Step 2 — Open a second terminal
+In VS Code: Terminal → New Terminal
 
-In VS Code:
+You should now have a second terminal. The first one is running FastAPI. The second one is where we'll run React.
 
-Terminal → New Terminal
-
-You should now have a second terminal.
-
-The first one is running FastAPI.
-
-The second one is where we'll run React.
-
-In the second terminal, go to the frontend:
+- In the second terminal, go to the frontend:
 
 ```
 cd frontend
 ```
 
-Then:
+- Then run:
 
 ```
 npm run dev
 ```
 
-Open:
+- Open in browser:
 
 http://localhost:5173/
 
 You should see your Local Medical Assistant page.
 
-Step 4 — Change App.jsx
+### Change App.jsx
 
-In the medical-assitant folder, open: frontend/src/App.jsx
-
-Replace the entire file with the following and save:
+- In the medical-assistant folder, open: frontend/src/App.jsx
+- Replace the entire file with the following:
 
 ```
 import { useState } from "react"
@@ -818,13 +789,13 @@ function App() {
 export default App
 ```
 
-Save it.
+- Save it.
 
-Before testing it, you need to enable React Frontend to Communicate with FastAPI
+**Before testing it, you need to enable React Frontend to Communicate with FastAPI**
 
 Because the React frontend and FastAPI backend run on different local ports, FastAPI needs to allow requests from the React development server.
 
-In medical assistant folder, open backend/main.py and replace with the following
+- In medical assistant folder, open backend/main.py and replace with the following:
 
 ```
 from fastapi import FastAPI
@@ -867,27 +838,26 @@ def ask(question: str):
     }
 ```
 
-Step 5 — Test the website
+### Test the website
 
 http://localhost:5173/
 
-Type: What is RAG? 
-
-Then click Ask.
+- Type: What is RAG? 
+- Click Ask.
 
 Expected Output: Phi-3's response
 
-## EXPLANATION:
+## EXPLANATION OF WHAT WE JUST DID:
 
-In `frontend/src/App.jsx`, the React application sends the user's question to the FastAPI backend using `fetch()`.
+- In `frontend/src/App.jsx`, the React application sends the user's question to the FastAPI backend using `fetch()`.
 
-The request is sent to:
+    - The request is sent to:
 
-http://127.0.0.1:8000/ask
+        http://127.0.0.1:8000/ask
 
-The question is passed as a URL parameter.
-
-FastAPI sends the question to Ollama, which generates an answer using Phi-3. The answer is then returned to React and displayed on the webpage.
+- The question is passed as a URL parameter.
+- FastAPI sends the question to Ollama, which generates an answer using Phi-3.
+- The answer is then returned to React and displayed on the webpage.
 
 ### Milestone
 
